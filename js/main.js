@@ -34,6 +34,7 @@
     Weather.init(scene);
     AudioSystem.init();
     Tooltip.init();
+    Minimap.init();
     UI.init();
 
     // Hide loading, show title
@@ -143,7 +144,8 @@
 
         // Update minimap
         const camera = Engine.getCamera();
-        UI.updateMinimap(camera.position, Characters.getNPCs());
+        const clayNodes = World.getInteractables().filter(o => o.userData.type === 'clayNode');
+        Minimap.render(camera.position, Characters.getNPCs(), ClaySystem.getAssistants(), clayNodes);
       }
 
       Engine.getRenderer().render(Engine.getScene(), Engine.getCamera());
