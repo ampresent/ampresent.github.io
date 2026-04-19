@@ -47,6 +47,7 @@
     Water.init(scene);
     Effects.init(scene);
     Landmarks.init(scene);
+    Collectibles.init(scene);
     ClaySystem.init(scene);
     SpellSystem.init(scene);
     Characters.init(scene);
@@ -161,6 +162,7 @@
         Water.update(gameTime);
         Effects.update(gameTime);
         Landmarks.update(gameTime);
+        Collectibles.update(gameTime);
         SpellSystem.update(delta);
         ClaySystem.update(gameTime, delta);
         Characters.update(gameTime);
@@ -304,29 +306,36 @@
       }
     }
 
-    // Clay nodes
+    // Clay nodes & collectibles
     const target = Engine.getRaycastTarget(5);
-    if (target && target.object.userData.type === 'clayNode') {
-      const node = target.object;
-      const amount = Math.min(node.userData.amount, 10);
-      ClaySystem.addClay(amount);
-      Inventory.add('clay', amount);
-      node.userData.amount -= amount;
-      AudioSystem.playSFX('harvest');
-      Achievements.track('harvest');
-      SpellSystem.castAt(target.point);
+    if (target) {
+      if (target.object.userData.type === 'clayNode') {
+        const node = target.object;
+        const amount = Math.min(node.userData.amount, 10);
+        ClaySystem.addClay(amount);
+        Inventory.add('clay', amount);
+        node.userData.amount -= amount;
+        AudioSystem.playSFX('harvest');
+        Achievements.track('harvest');
+        SpellSystem.castAt(target.point);
 
-      QuestSystem.completeObjective('first_steps', 'harvest_clay');
-      if (ClaySystem.getClayAmount() >= 10) {
-        QuestSystem.completeObjective('first_assistant', 'collect_10_clay');
+        QuestSystem.completeObjective('first_steps', 'harvest_clay');
+        if (ClaySystem.getClayAmount() >= 10) {
+          QuestSystem.completeObjective('first_assistant', 'collect_10_clay');
+        }
+
+        if (node.userData.amount <= 0) {
+          Engine.getScene().remove(node);
+          World.removeInteractable(node);
+          Notify.warning('这个黏土矿已经采空了');
+        }
+        return;
       }
 
-      if (node.userData.amount <= 0) {
-        Engine.getScene().remove(node);
-        World.removeInteractable(node);
-        UI.notify('这个黏土矿已经采空了');
+      if (target.object.userData.type === 'collectible') {
+        Collectibles.collect(target.object);
+        return;
       }
-      return;
     }
 
     // Assistants
@@ -454,11 +463,17 @@
       }
     }
 
-    // Check clay nodes via raycast
+    // Check clay nodes and collectibles via raycast
     const target = Engine.getRaycastTarget(5);
-    if (target && target.object.userData.type === 'clayNode') {
-      InteractPrompt.show('E', '采集黏土');
-      return;
+    if (target) {
+      if (target.object.userData.type === 'clayNode') {
+        InteractPrompt.show('E', '采集黏土');
+        return;
+      }
+      if (target.object.userData.type === 'collectible') {
+        InteractPrompt.show('E', `拾取 ${target.object.userData.itemType.name}`);
+        return;
+      }
     }
 
     // Check assistants
