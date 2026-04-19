@@ -48,6 +48,7 @@
     Effects.init(scene);
     Landmarks.init(scene);
     Collectibles.init(scene);
+    Secrets.init(scene);
     Dungeons.init(scene);
     ClaySystem.init(scene);
     SpellSystem.init(scene);
@@ -55,12 +56,19 @@
     Enemies.init(scene);
     Bosses.init(scene);
     Trail.init(scene);
+
+    // Zone system with music integration
+    Zones.init((zone) => {
+      Notify.info(`📍 ${zone.name} — ${zone.desc || ''}`);
+      Music.setZone(zone.music || 'overworld');
+    });
     QuestSystem.init();
     DayNight.init(scene);
     Weather.init(scene);
     NightEvents.init(scene);
     AudioSystem.init();
     Settings.init();
+    Music.init();
     Tooltip.init();
     Minimap.init();
     Compass.init();
@@ -174,6 +182,7 @@
         Landmarks.update(gameTime);
         Collectibles.update(gameTime);
         Dungeons.update(gameTime);
+        Secrets.update(gameTime);
         SpellSystem.update(delta);
         ClaySystem.update(gameTime, delta);
         Characters.update(gameTime);
@@ -185,6 +194,9 @@
 
         // Player trail
         const cameraPos = Engine.getCamera().position;
+
+        // Zone detection
+        Zones.update(cameraPos);
         const isMoving = Engine.isLocked() && (Math.abs(Engine.getCamera().position.x - (window._lastPX || 0)) > 0.01 || Math.abs(Engine.getCamera().position.z - (window._lastPZ || 0)) > 0.01);
         Trail.update(delta, cameraPos, isMoving);
         window._lastPX = cameraPos.x;
@@ -239,6 +251,8 @@
     // Start audio
     AudioSystem.resume();
     AudioSystem.startAmbient();
+    Music.resume();
+    Music.play();
 
     // Initial dialog
     setTimeout(() => {
@@ -366,6 +380,11 @@
 
       if (target.object.userData.type === 'collectible') {
         Collectibles.collect(target.object);
+        return;
+      }
+
+      if (target.object.userData.type === 'secret') {
+        Secrets.discover(target.object.userData.secretId);
         return;
       }
     }
