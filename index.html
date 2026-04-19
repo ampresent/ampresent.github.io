@@ -100,6 +100,12 @@
       <div id="quest-list"></div>
       <button id="quest-close" onclick="document.getElementById('quest-panel').style.display='none'">关闭</button>
     </div>
+
+    <div id="inventory-panel" style="display:none;">
+      <h2>🎒 背包</h2>
+      <div id="inventory-grid"></div>
+      <button id="inv-close" onclick="document.getElementById('inventory-panel').style.display='none'">关闭</button>
+    </div>
   </div>
 
   <div id="title-screen">
@@ -115,7 +121,7 @@
       </div>
       <div class="title-footer">
         <span>WASD</span> 移动 · <span>鼠标</span> 视角 · <span>左键</span> 施法 · <span>E</span> 交互<br>
-        <span>Q</span> 任务 · <span>Tab</span> 工坊 · <span>F5</span> 存档
+        <span>Q</span> 任务 · <span>I</span> 背包 · <span>Tab</span> 工坊 · <span>F5</span> 存档
       </div>
     </div>
   </div>
@@ -127,6 +133,7 @@
   <script src="js/structures.js"></script>
   <script src="js/water.js"></script>
   <script src="js/effects.js"></script>
+  <script src="js/inventory.js"></script>
   <script src="js/clay.js"></script>
   <script src="js/spell.js"></script>
   <script src="js/character.js"></script>

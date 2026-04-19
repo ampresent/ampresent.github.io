@@ -93,13 +93,17 @@
       if (UI.isDialogActive()) UI.closeDialog();
       const qp = document.getElementById('quest-panel');
       if (qp.style.display !== 'none') qp.style.display = 'none';
+      const ip = document.getElementById('inventory-panel');
+      if (ip.style.display !== 'none') ip.style.display = 'none';
     });
 
-    // Q key for quest panel, F5 for save
+    // Q key for quest panel, I for inventory, F5 for save
     document.addEventListener('keydown', (e) => {
       if (!gameStarted || UI.isDialogActive()) return;
       if (e.code === 'KeyQ') {
         toggleQuestPanel();
+      } else if (e.code === 'KeyI') {
+        toggleInventoryPanel();
       } else if (e.code === 'F5') {
         e.preventDefault();
         doSave();
@@ -247,6 +251,7 @@
       const node = target.object;
       const amount = Math.min(node.userData.amount, 10);
       ClaySystem.addClay(amount);
+      Inventory.add('clay', amount);
       node.userData.amount -= amount;
       AudioSystem.playSFX('harvest');
       SpellSystem.castAt(target.point);
@@ -299,6 +304,18 @@
     if (panel.style.display === 'none' || !panel.style.display) {
       renderQuestPanel();
       panel.style.display = 'block';
+      AudioSystem.playSFX('click');
+    } else {
+      panel.style.display = 'none';
+    }
+  }
+
+  function toggleInventoryPanel() {
+    const panel = document.getElementById('inventory-panel');
+    if (panel.style.display === 'none' || !panel.style.display) {
+      Inventory.render();
+      panel.style.display = 'block';
+      AudioSystem.playSFX('click');
     } else {
       panel.style.display = 'none';
     }
