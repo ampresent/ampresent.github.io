@@ -146,6 +146,7 @@ const Engine = (() => {
     const origin = camera.position.clone();
     const dir = getCameraForward();
     const raycaster = new THREE.Raycaster(origin, dir, 0, maxDist);
+    raycaster.camera = camera;
     const intersects = raycaster.intersectObjects(scene.children, true);
     return intersects.length > 0 ? intersects[0] : null;
   }
