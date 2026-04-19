@@ -47,6 +47,7 @@
     Water.init(scene);
     Underwater.init(scene);
     Effects.init(scene);
+    Ambients.init(scene);
     Landmarks.init(scene);
     Collectibles.init(scene);
     Secrets.init(scene);
@@ -189,6 +190,7 @@
         Water.update(gameTime);
         Underwater.update(gameTime);
         Effects.update(gameTime);
+        Ambients.update(gameTime);
         Landmarks.update(gameTime);
         Collectibles.update(gameTime);
         Dungeons.update(gameTime);
