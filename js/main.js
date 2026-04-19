@@ -47,7 +47,8 @@
     // Init systems
     const scene = Engine.getScene();
     World.init(scene);
-    Structures.init(scene);
+    await ModelLoader.init();
+    await Structures.init(scene);
     Water.init(scene);
     Underwater.init(scene);
     Effects.init(scene);
