@@ -24,12 +24,14 @@
     const scene = Engine.getScene();
     World.init(scene);
     Structures.init(scene);
+    Water.init(scene);
     Effects.init(scene);
     ClaySystem.init(scene);
     SpellSystem.init(scene);
     Characters.init(scene);
     QuestSystem.init();
     DayNight.init(scene);
+    Weather.init(scene);
     AudioSystem.init();
     UI.init();
 
@@ -107,11 +109,13 @@
       if (gameStarted) {
         Engine.update(delta);
         World.update(gameTime);
+        Water.update(gameTime);
         Effects.update(gameTime);
         SpellSystem.update(delta);
         ClaySystem.update(gameTime, delta);
         Characters.update(gameTime);
         DayNight.update(delta);
+        Weather.update(delta, gameTime);
 
         // Update time display
         const timeStr = DayNight.getTimeString();

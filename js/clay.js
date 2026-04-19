@@ -216,8 +216,11 @@ const ClaySystem = (() => {
   }
 
   function update(time, delta) {
+    const camera = Engine.getCamera();
+    const cameraPos = camera.position;
+
     // Animate crafted assistants
-    craftedAssistants.forEach(a => {
+    craftedAssistants.forEach((a, idx) => {
       if (a.userData.spawning) {
         const elapsed = time - a.userData.spawnTime;
         if (elapsed < 1.0) {
@@ -233,15 +236,49 @@ const ClaySystem = (() => {
       }
 
       // Hover animation
-      const baseY = a.position.y;
       a.children[0].position.y = Math.sin(time * 2 + a.userData.floatOffset) * 0.05;
 
-      // Rotate to face player sometimes
-      const camera = Engine.getCamera();
-      const toPlayer = new THREE.Vector3().subVectors(camera.position, a.position);
-      toPlayer.y = 0;
-      const targetAngle = Math.atan2(toPlayer.x, toPlayer.z);
-      a.rotation.y = THREE.MathUtils.lerp(a.rotation.y, targetAngle, 0.02);
+      // Follow player behavior
+      const distToPlayer = a.position.distanceTo(cameraPos);
+      const followDist = 5 + idx * 2; // staggered following
+      const stopDist = 2.5 + idx * 0.5;
+
+      if (distToPlayer > followDist) {
+        // Move toward player
+        const dir = new THREE.Vector3().subVectors(cameraPos, a.position).normalize();
+        const speed = 3 * delta;
+        // Offset so assistants don't stack
+        const offsetAngle = (idx / Math.max(craftedAssistants.length, 1)) * Math.PI * 2;
+        const offsetX = Math.cos(offsetAngle) * 2;
+        const offsetZ = Math.sin(offsetAngle) * 2;
+        const targetX = cameraPos.x + offsetX;
+        const targetZ = cameraPos.z + offsetZ;
+        const targetPos = new THREE.Vector3(targetX, World.getGroundHeight(targetX, targetZ) + 0.5, targetZ);
+        const toTarget = new THREE.Vector3().subVectors(targetPos, a.position);
+        if (toTarget.length() > 0.1) {
+          toTarget.normalize().multiplyScalar(speed);
+          a.position.add(toTarget);
+        }
+      }
+
+      // Face movement direction or player
+      if (distToPlayer > stopDist) {
+        const toPlayer = new THREE.Vector3().subVectors(cameraPos, a.position);
+        toPlayer.y = 0;
+        const targetAngle = Math.atan2(toPlayer.x, toPlayer.z);
+        a.rotation.y = THREE.MathUtils.lerp(a.rotation.y, targetAngle, 0.03);
+      } else {
+        // Idle: slowly rotate to face player
+        const toPlayer = new THREE.Vector3().subVectors(cameraPos, a.position);
+        toPlayer.y = 0;
+        const targetAngle = Math.atan2(toPlayer.x, toPlayer.z);
+        a.rotation.y = THREE.MathUtils.lerp(a.rotation.y, targetAngle, 0.01);
+      }
+
+      // Bob up and down while moving
+      const groundY = World.getGroundHeight(a.position.x, a.position.z);
+      const hoverHeight = 0.5 + Math.sin(time * 3 + a.userData.floatOffset) * 0.15;
+      a.position.y = THREE.MathUtils.lerp(a.position.y, groundY + hoverHeight, 0.05);
     });
   }
 
