@@ -92,7 +92,7 @@ const QuestSystem = (() => {
     if (quest.objectives.every(o => o.done)) {
       quest.status = 'completed';
       completedQuests.push(quest);
-      UI.notify(`🎉 任务完成: ${quest.title}`);
+      QuestAnim.celebrate(quest.title);
 
       // Unlock next quests
       unlockNextQuests(quest.id);

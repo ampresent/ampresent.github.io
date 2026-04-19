@@ -78,6 +78,7 @@
     WorldMap.init();
     InteractPrompt.init();
     ScreenFX.init();
+    QuestAnim.init(scene);
     UI.init();
 
     // Hide loading, show title
@@ -245,6 +246,7 @@
 
         // Update screen effects
         ScreenFX.update();
+        QuestAnim.update(delta);
       }
 
       Engine.getRenderer().render(Engine.getScene(), Engine.getCamera());
