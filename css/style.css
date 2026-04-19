@@ -77,6 +77,16 @@ canvas#game-canvas { display: block; width: 100vw; height: 100vh; }
   transform: translateY(-2px);
   box-shadow: 0 6px 30px rgba(200,122,74,0.5);
 }
+#load-btn {
+  background: transparent;
+  color: #8a7a6a; border: 1px solid rgba(200,122,74,0.3);
+  padding: 10px 36px; font-size: 0.9rem; margin-top: 12px;
+  font-family: 'Noto Sans SC', sans-serif; border-radius: 4px;
+  cursor: pointer; transition: all 0.3s; display: block; margin-left: auto; margin-right: auto;
+}
+#load-btn:hover {
+  border-color: #c87a4a; color: #e8c87a;
+}
 .title-footer {
   margin-top: 3rem; color: #5a4a3a; font-size: 0.8rem; letter-spacing: 0.1em;
 }

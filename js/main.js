@@ -24,6 +24,7 @@
     const scene = Engine.getScene();
     World.init(scene);
     Structures.init(scene);
+    Effects.init(scene);
     ClaySystem.init(scene);
     SpellSystem.init(scene);
     Characters.init(scene);
@@ -34,6 +35,15 @@
 
     // Hide loading, show title
     UI.hideLoading();
+
+    // Check for save
+    if (SaveSystem.hasSave()) {
+      const info = SaveSystem.getSaveInfo();
+      const loadBtn = document.getElementById('load-btn');
+      loadBtn.style.display = 'block';
+      loadBtn.textContent = `继续冒险 📂 (${info.date})`;
+      loadBtn.addEventListener('click', () => loadGame());
+    }
 
     // Start button
     document.getElementById('start-btn').addEventListener('click', startGame);
@@ -76,10 +86,14 @@
       if (qp.style.display !== 'none') qp.style.display = 'none';
     });
 
-    // Q key for quest panel
+    // Q key for quest panel, F5 for save
     document.addEventListener('keydown', (e) => {
-      if (e.code === 'KeyQ' && gameStarted && !UI.isDialogActive()) {
+      if (!gameStarted || UI.isDialogActive()) return;
+      if (e.code === 'KeyQ') {
         toggleQuestPanel();
+      } else if (e.code === 'F5') {
+        e.preventDefault();
+        doSave();
       }
     });
 
@@ -93,6 +107,7 @@
       if (gameStarted) {
         Engine.update(delta);
         World.update(gameTime);
+        Effects.update(gameTime);
         SpellSystem.update(delta);
         ClaySystem.update(gameTime, delta);
         Characters.update(gameTime);
@@ -131,14 +146,67 @@
     // Initial dialog
     setTimeout(() => {
       UI.showDialog('🌍', '泥灵界',
-        '你踏入了泥灵界。远处有一位老人正在捏着什么……也许该去打个招呼。\n\n提示：按 Q 查看任务日志'
+        '你踏入了泥灵界。远处有一位老人正在捏着什么……也许该去打个招呼。\n\n提示：按 Q 任务 | Tab 工坊 | F5 存档'
       );
       AudioSystem.playSFX('dialog');
     }, 1500);
   }
 
+  function loadGame() {
+    const saveData = SaveSystem.load();
+    if (!saveData) {
+      UI.notify('存档读取失败');
+      return;
+    }
+
+    startGame();
+
+    // Restore player position
+    if (saveData.player) {
+      const camera = Engine.getCamera();
+      camera.position.set(
+        saveData.player.position.x,
+        saveData.player.position.y,
+        saveData.player.position.z
+      );
+    }
+
+    // Restore clay
+    if (saveData.clay) {
+      // Directly set the amount (addClay adds, so we need to hack it)
+      // We'll just add what was saved
+      ClaySystem.addClay(saveData.clay);
+    }
+
+    UI.notify('📂 存档已读取');
+    AudioSystem.playSFX('quest');
+  }
+
+  function doSave() {
+    const camera = Engine.getCamera();
+    const state = {
+      position: { x: camera.position.x, y: camera.position.y, z: camera.position.z },
+      rotation: { y: camera.rotation.y, x: camera.rotation.x },
+      clayAmount: ClaySystem.getClayAmount(),
+      quests: QuestSystem.getAllQuests().map(q => ({
+        id: q.id, status: q.status,
+        objectives: q.objectives.map(o => ({ id: o.id, done: o.done })),
+      })),
+      assistants: ClaySystem.getAssistants().map(a => ({
+        type: a.userData.assistantType,
+        position: { x: a.position.x, y: a.position.y, z: a.position.z },
+      })),
+    };
+
+    if (SaveSystem.save(state)) {
+      UI.notify('💾 游戏已保存');
+      AudioSystem.playSFX('click');
+    } else {
+      UI.notify('❌ 保存失败');
+    }
+  }
+
   function handleInteraction() {
-    // Check for NPC proximity
     const camera = Engine.getCamera();
     const cameraPos = camera.position;
 
@@ -151,7 +219,6 @@
         UI.showNPCDialog(data, 'greeting');
         AudioSystem.playSFX('dialog');
 
-        // Quest completion
         if (npc.userData.npcKey === 'elder') {
           QuestSystem.completeObjective('first_steps', 'talk_elder');
           AudioSystem.playSFX('quest');
@@ -169,14 +236,9 @@
       const amount = Math.min(node.userData.amount, 10);
       ClaySystem.addClay(amount);
       node.userData.amount -= amount;
-
-      // SFX
       AudioSystem.playSFX('harvest');
-
-      // Visual feedback
       SpellSystem.castAt(target.point);
 
-      // Quest completion
       QuestSystem.completeObjective('first_steps', 'harvest_clay');
       if (ClaySystem.getClayAmount() >= 10) {
         QuestSystem.completeObjective('first_assistant', 'collect_10_clay');
@@ -200,6 +262,7 @@
         UI.showDialog(tmpl.emoji, tmpl.name,
           `${tmpl.description}\n\n能力: ${abilities}`
         );
+        AudioSystem.playSFX('dialog');
         return;
       }
     }
@@ -216,8 +279,6 @@
     }
 
     AudioSystem.playSFX('spell');
-
-    // Quest completion
     QuestSystem.completeObjective('first_steps', 'cast_spell');
   }
 
