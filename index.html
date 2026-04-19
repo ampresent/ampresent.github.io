@@ -151,6 +151,12 @@
       <canvas id="worldmap-canvas"></canvas>
       <button id="worldmap-close" onclick="WorldMap.toggle()">关闭 (M)</button>
     </div>
+
+    <div id="stats-panel" style="display:none;">
+      <h2>📊 统计</h2>
+      <div id="stats-content"></div>
+      <button id="stats-close" onclick="document.getElementById('stats-panel').style.display='none'">关闭</button>
+    </div>
   </div>
 
   <div id="title-screen">
@@ -166,8 +172,8 @@
       </div>
       <div class="title-footer">
         <span>WASD</span> 移动 · <span>鼠标</span> 视角 · <span>左键</span> 施法 · <span>E</span> 交互<br>
-        <span>Q</span> 任务 · <span>I</span> 背包 · <span>R</span> 技能 · <span>P</span> 配方 · <span>U</span> 成就 · <span>M</span> 地图<br>
-        <span>Tab</span> 工坊 · <span>F</span> 商店 · <span>F5</span> 存档 · <span>Esc</span> 设置
+        <span>Q</span> 任务 · <span>I</span> 背包 · <span>R</span> 技能 · <span>P</span> 配方 · <span>U</span> 成就 · <span>T</span> 统计<br>
+        <span>M</span> 地图 · <span>Tab</span> 工坊 · <span>F</span> 商店 · <span>F5</span> 存档 · <span>Esc</span> 设置
       </div>
     </div>
   </div>
@@ -187,6 +193,7 @@
   <script src="js/abilities.js"></script>
   <script src="js/recipes.js"></script>
   <script src="js/achievements.js"></script>
+  <script src="js/stats.js"></script>
   <script src="js/player.js"></script>
   <script src="js/clay.js"></script>
   <script src="js/spell.js"></script>

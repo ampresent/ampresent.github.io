@@ -134,7 +134,7 @@
       if (UI.isCraftOpen()) { UI.closeCraft(); return; }
       if (UI.isDialogActive()) { UI.closeDialog(); return; }
       // Close any open panel
-      const panels = ['quest-panel', 'inventory-panel', 'abilities-panel', 'recipes-panel', 'achievements-panel', 'settings-panel', 'shop-panel', 'worldmap-panel'];
+      const panels = ['quest-panel', 'inventory-panel', 'abilities-panel', 'recipes-panel', 'achievements-panel', 'settings-panel', 'shop-panel', 'worldmap-panel', 'stats-panel'];
       let closed = false;
       panels.forEach(id => {
         const el = document.getElementById(id);
@@ -164,6 +164,8 @@
         if (Shop.isOpen()) Shop.close(); else Shop.open();
       } else if (e.code === 'KeyM') {
         WorldMap.toggle();
+      } else if (e.code === 'KeyT') {
+        toggleStatsPanel();
       } else if (e.code === 'F5') {
         e.preventDefault();
         doSave();
@@ -200,6 +202,9 @@
 
         // Zone detection
         Zones.update(cameraPos);
+
+        // Stats tracking
+        Stats.update(delta, cameraPos);
         const isMoving = Engine.isLocked() && (Math.abs(Engine.getCamera().position.x - (window._lastPX || 0)) > 0.01 || Math.abs(Engine.getCamera().position.z - (window._lastPZ || 0)) > 0.01);
         Trail.update(delta, cameraPos, isMoving);
         window._lastPX = cameraPos.x;
@@ -451,7 +456,7 @@
         const spellBonus = spellType === 'fire' ? 5 : spellType === 'water' ? 3 : spellType === 'wind' ? 2 : spellType === 'life' ? 0 : 1;
         const totalDamage = baseDamage + spellBonus;
         Enemies.damageEnemy(enemy, totalDamage);
-        if (enemy.userData.hp <= 0) Player.addXP(enemy.userData.template.xp);
+        if (enemy.userData.hp <= 0) { Player.addXP(enemy.userData.template.xp); Stats.track('kill'); }
         SpellSystem.castAt(enemy.position);
         AudioSystem.playSFX('spell');
         ScreenFX.magicGlow(SpellSystem.SPELL_COLORS[spellType]);
@@ -472,6 +477,7 @@
     AudioSystem.playSFX('spell');
     ScreenFX.magicGlow(SpellSystem.SPELL_COLORS[spellType]);
     Achievements.track('spell', spellType);
+    Stats.track('spell');
     QuestSystem.completeObjective('first_steps', 'cast_spell');
   }
 
@@ -524,6 +530,17 @@
     if (panel.style.display === 'none' || !panel.style.display) {
       Achievements.render();
       document.getElementById('ach-count').textContent = `(${Achievements.getCount()}/${Achievements.getAll().length})`;
+      panel.style.display = 'block';
+      AudioSystem.playSFX('click');
+    } else {
+      panel.style.display = 'none';
+    }
+  }
+
+  function toggleStatsPanel() {
+    const panel = document.getElementById('stats-panel');
+    if (panel.style.display === 'none' || !panel.style.display) {
+      Stats.render();
       panel.style.display = 'block';
       AudioSystem.playSFX('click');
     } else {

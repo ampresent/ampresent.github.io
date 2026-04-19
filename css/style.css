@@ -747,6 +747,35 @@ canvas#game-canvas { display: block; width: 100vw; height: 100vh; }
 }
 #worldmap-close:hover { background: rgba(255,255,255,0.05); color: #8a7a6a; }
 
+/* === Stats Panel === */
+#stats-panel {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: min(360px, 88vw);
+  background: rgba(8,8,16,0.95);
+  border: 1px solid rgba(200,122,74,0.2);
+  border-radius: 14px;
+  padding: 28px 30px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 12px 48px rgba(0,0,0,0.5);
+  animation: panelPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+#stats-panel h2 { color: #e8c87a; font-size: 1.1rem; margin-bottom: 20px; letter-spacing: 0.1em; }
+.stat-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+.stat-label { color: #8a7a6a; font-size: 0.8rem; }
+.stat-value { color: #e8c87a; font-size: 0.85rem; font-weight: 700; }
+#stats-close {
+  display: block; margin: 16px auto 0;
+  padding: 8px 28px; background: rgba(255,255,255,0.03);
+  color: #6a5a4a; border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 6px; cursor: pointer;
+  font-family: 'Noto Sans SC', sans-serif; font-size: 0.8rem;
+  transition: all 0.2s;
+}
+#stats-close:hover { background: rgba(255,255,255,0.05); color: #8a7a6a; }
+
 /* === Crosshair === */
 .crosshair {
   position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
