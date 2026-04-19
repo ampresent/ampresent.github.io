@@ -26,6 +26,7 @@
     Structures.init(scene);
     Water.init(scene);
     Effects.init(scene);
+    Landmarks.init(scene);
     ClaySystem.init(scene);
     SpellSystem.init(scene);
     Characters.init(scene);
@@ -128,6 +129,7 @@
         World.update(gameTime);
         Water.update(gameTime);
         Effects.update(gameTime);
+        Landmarks.update(gameTime);
         SpellSystem.update(delta);
         ClaySystem.update(gameTime, delta);
         Characters.update(gameTime);
