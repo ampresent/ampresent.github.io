@@ -13,7 +13,7 @@ const ModelLoader = (() => {
     if (initPromise) return initPromise;
     initPromise = (async () => {
       try {
-        const mod = await import('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js');
+        const mod = await import('three/addons/loaders/GLTFLoader.js');
         loader = new mod.GLTFLoader();
         ready = true;
         console.log('[ModelLoader] GLTFLoader ready');

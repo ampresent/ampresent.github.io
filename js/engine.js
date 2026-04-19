@@ -93,7 +93,7 @@ const Engine = (() => {
   }
 
   function onClick() {
-    if (isLocked) emit('click');
+    if (isLocked || MobileControls.isEnabled()) emit('click');
   }
 
   // Mobile look support

@@ -147,7 +147,7 @@
       if (UI.isCraftOpen()) { UI.closeCraft(); return; }
       if (UI.isDialogActive()) { UI.closeDialog(); return; }
       // Close any open panel
-      const panels = ['quest-panel', 'inventory-panel', 'abilities-panel', 'recipes-panel', 'achievements-panel', 'settings-panel', 'shop-panel', 'worldmap-panel', 'stats-panel'];
+      const panels = ['quest-panel', 'inventory-panel', 'waypoint-panel', 'abilities-panel', 'recipes-panel', 'achievements-panel', 'settings-panel', 'shop-panel', 'worldmap-panel', 'stats-panel'];
       let closed = false;
       panels.forEach(id => {
         const el = document.getElementById(id);
@@ -300,7 +300,7 @@
       return;
     }
 
-    startGame();
+    startGame(true);
 
     // Restore player position
     const camera = Engine.getCamera();
@@ -652,6 +652,15 @@
       }
     }
 
+    // Check ghost NPC (night only)
+    const ghost = NightEvents.getGhostNPC();
+    if (ghost && ghost.visible) {
+      if (cameraPos.distanceTo(ghost.position) < 4) {
+        InteractPrompt.show('E', '与 夜语 交谈');
+        return;
+      }
+    }
+
     // Check assistants (distance only)
     const assistants = ClaySystem.getAssistants();
     for (const a of assistants) {
@@ -662,10 +671,18 @@
     }
 
     // Check interactables via raycast (only nearby objects)
+    // Collect nearby interactable objects
     const allTargets = [
       ...World.getInteractables(),
       ...Collectibles.getItems(),
     ];
+    // Also check for books in the scene
+    const scene = Engine.getScene();
+    scene.children.forEach(child => {
+      if (child.userData && child.userData.type === 'book' && child.visible !== false) {
+        allTargets.push(child);
+      }
+    });
     const nearby = allTargets.filter(o => o.visible !== false && cameraPos.distanceTo(o.position) < 6);
     if (nearby.length > 0) {
       const target = Engine.getRaycastTarget(5, nearby);
@@ -680,6 +697,10 @@
         }
         if (target.object.userData.type === 'secret') {
           InteractPrompt.show('E', '发现秘密');
+          return;
+        }
+        if (target.object.userData.type === 'book') {
+          InteractPrompt.show('E', '阅读书籍');
           return;
         }
       }
