@@ -53,6 +53,8 @@
     SpellSystem.init(scene);
     Characters.init(scene);
     Enemies.init(scene);
+    Bosses.init(scene);
+    Trail.init(scene);
     QuestSystem.init();
     DayNight.init(scene);
     Weather.init(scene);
@@ -174,9 +176,17 @@
         ClaySystem.update(gameTime, delta);
         Characters.update(gameTime);
         Enemies.update(delta, gameTime, Engine.getCamera().position);
+        Bosses.update(gameTime, delta, Engine.getCamera().position);
         DayNight.update(delta);
         Weather.update(delta, gameTime);
         NightEvents.update(gameTime);
+
+        // Player trail
+        const cameraPos = Engine.getCamera().position;
+        const isMoving = Engine.isLocked() && (Math.abs(Engine.getCamera().position.x - (window._lastPX || 0)) > 0.01 || Math.abs(Engine.getCamera().position.z - (window._lastPZ || 0)) > 0.01);
+        Trail.update(delta, cameraPos, isMoving);
+        window._lastPX = cameraPos.x;
+        window._lastPZ = cameraPos.z;
 
         // Achievement tracking
         if (DayNight.isNight()) Achievements.track('night');
@@ -383,6 +393,25 @@
     const camera = Engine.getCamera();
     const camPos = camera.position;
     const forward = Engine.getCameraForward();
+
+    // Check for boss hit first
+    const boss = Bosses.getActiveBoss();
+    if (boss && boss.userData.alive) {
+      const toBoss = new THREE.Vector3().subVectors(boss.position, camPos);
+      const bossDist = toBoss.length();
+      if (bossDist < 15) {
+        const bossDir = toBoss.normalize();
+        if (forward.dot(bossDir) > 0.85) {
+          const damage = Player.getAttack() + (spellType === 'fire' ? 8 : 5);
+          Bosses.damageBoss(damage);
+          SpellSystem.castAt(boss.position);
+          AudioSystem.playSFX('spell');
+          ScreenFX.flash('rgba(255,200,0,0.1)', 100);
+          Achievements.track('spell', spellType);
+          return;
+        }
+      }
+    }
 
     for (const enemy of enemies) {
       if (!enemy.userData.alive) continue;
