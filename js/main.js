@@ -56,6 +56,7 @@
     Enemies.init(scene);
     Bosses.init(scene);
     Trail.init(scene);
+    Pets.init(scene);
 
     // Zone system with music integration
     Zones.init((zone) => {
@@ -193,6 +194,7 @@
         Characters.update(gameTime);
         Enemies.update(delta, gameTime, Engine.getCamera().position);
         Bosses.update(gameTime, delta, Engine.getCamera().position);
+        Pets.update(gameTime, delta);
         DayNight.update(delta);
         Weather.update(delta, gameTime);
         NightEvents.update(gameTime);
