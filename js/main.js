@@ -125,7 +125,7 @@
       if (UI.isCraftOpen()) { UI.closeCraft(); return; }
       if (UI.isDialogActive()) { UI.closeDialog(); return; }
       // Close any open panel
-      const panels = ['quest-panel', 'inventory-panel', 'abilities-panel', 'recipes-panel', 'achievements-panel', 'settings-panel'];
+      const panels = ['quest-panel', 'inventory-panel', 'abilities-panel', 'recipes-panel', 'achievements-panel', 'settings-panel', 'shop-panel'];
       let closed = false;
       panels.forEach(id => {
         const el = document.getElementById(id);
@@ -151,6 +151,8 @@
         toggleRecipesPanel();
       } else if (e.code === 'KeyU') {
         toggleAchievementsPanel();
+      } else if (e.code === 'KeyF') {
+        if (Shop.isOpen()) Shop.close(); else Shop.open();
       } else if (e.code === 'F5') {
         e.preventDefault();
         doSave();

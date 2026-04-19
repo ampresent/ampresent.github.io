@@ -679,6 +679,45 @@ canvas#game-canvas { display: block; width: 100vw; height: 100vh; }
 }
 #settings-close:hover { background: rgba(255,255,255,0.05); color: #8a7a6a; }
 
+/* === Shop Panel === */
+#shop-panel {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: min(400px, 88vw); max-height: 70vh;
+  background: rgba(8,8,16,0.95);
+  border: 1px solid rgba(170,136,255,0.2);
+  border-radius: 14px;
+  padding: 28px 30px;
+  backdrop-filter: blur(20px);
+  overflow-y: auto;
+  box-shadow: 0 12px 48px rgba(0,0,0,0.5);
+  animation: panelPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+#shop-panel h2 { color: #e8c87a; font-size: 1.1rem; margin-bottom: 20px; letter-spacing: 0.1em; }
+.shop-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-radius: 8px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  margin-bottom: 6px; cursor: pointer;
+  transition: all 0.2s;
+}
+.shop-item:hover { background: rgba(170,136,255,0.06); border-color: rgba(170,136,255,0.2); }
+.shop-item.cant-afford { opacity: 0.35; cursor: not-allowed; }
+.shop-emoji { font-size: 1.5rem; }
+.shop-info { flex: 1; }
+.shop-name { color: #e8c87a; font-size: 0.85rem; font-weight: 700; }
+.shop-desc { color: #6a5a4a; font-size: 0.72rem; }
+.shop-price { color: #aa88ff; font-size: 0.82rem; font-weight: 700; white-space: nowrap; }
+#shop-close {
+  display: block; margin: 16px auto 0;
+  padding: 8px 28px; background: rgba(255,255,255,0.03);
+  color: #6a5a4a; border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 6px; cursor: pointer;
+  font-family: 'Noto Sans SC', sans-serif; font-size: 0.8rem;
+  transition: all 0.2s;
+}
+#shop-close:hover { background: rgba(255,255,255,0.05); color: #8a7a6a; }
+
 /* === Crosshair === */
 .crosshair {
   position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);

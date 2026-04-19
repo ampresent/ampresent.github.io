@@ -78,8 +78,14 @@ const Characters = (() => {
         {
           id: 'discovery',
           text: '最近我发现了一种紫色的稀有黏土，它似乎能同时承载多种魔法！如果能找到它，或许能创造出前所未有的助手……',
-          next: null,
+          next: 'shop_offer',
           action: 'unlock_recipe',
+        },
+        {
+          id: 'shop_offer',
+          text: '对了，我这里有些好东西，要不要看看？按 F 打开商店！',
+          next: null,
+          action: 'open_shop',
         },
       ],
     },
