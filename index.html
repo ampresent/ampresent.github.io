@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clay Spell Craft — 泥灵界</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="loading-screen">
+    <div class="loading-content">
+      <div class="clay-loader">
+        <div class="clay-blob"></div>
+        <div class="clay-blob"></div>
+        <div class="clay-blob"></div>
+      </div>
+      <h1>泥灵界</h1>
+      <p>Clayrealm</p>
+      <div class="loading-bar"><div class="loading-fill"></div></div>
+    </div>
+  </div>
+
+  <canvas id="game-canvas"></canvas>
+
+  <div id="hud" style="display:none;">
+    <div id="hud-top">
+      <div id="player-info">
+        <span class="icon">🧙</span>
+        <span id="player-name">塑灵师</span>
+      </div>
+      <div id="mana-bar">
+        <span class="icon">✨</span>
+        <div class="bar"><div class="bar-fill" id="mana-fill"></div></div>
+        <span id="mana-text">100</span>
+      </div>
+    </div>
+
+    <div id="hud-bottom">
+      <div id="toolbar">
+        <div class="tool-slot active" data-tool="sculpt" title="捏塑 (1)">
+          <span class="tool-icon">🤲</span>
+          <span class="tool-name">捏塑</span>
+        </div>
+        <div class="tool-slot" data-tool="fire" title="火焰魔法 (2)">
+          <span class="tool-icon">🔥</span>
+          <span class="tool-name">火焰</span>
+        </div>
+        <div class="tool-slot" data-tool="water" title="水流魔法 (3)">
+          <span class="tool-icon">💧</span>
+          <span class="tool-name">水流</span>
+        </div>
+        <div class="tool-slot" data-tool="wind" title="风暴魔法 (4)">
+          <span class="tool-icon">🌪️</span>
+          <span class="tool-name">风暴</span>
+        </div>
+        <div class="tool-slot" data-tool="life" title="生命魔法 (5)">
+          <span class="tool-icon">🌿</span>
+          <span class="tool-name">生命</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="dialog-box" style="display:none;">
+      <div class="dialog-portrait" id="dialog-portrait"></div>
+      <div class="dialog-content">
+        <div class="dialog-name" id="dialog-name"></div>
+        <div class="dialog-text" id="dialog-text"></div>
+      </div>
+      <div class="dialog-continue">按 Space 继续 ▶</div>
+    </div>
+
+    <div id="craft-panel" style="display:none;">
+      <h2>🧪 黏土工坊</h2>
+      <div id="craft-slots">
+        <div class="craft-slot" id="craft-clay" data-slot="clay">
+          <span class="slot-label">黏土</span>
+        </div>
+        <div class="craft-plus">+</div>
+        <div class="craft-slot" id="craft-spell" data-slot="spell">
+          <span class="slot-label">魔法</span>
+        </div>
+        <div class="craft-equals">=</div>
+        <div class="craft-slot craft-result" id="craft-result">
+          <span class="slot-label">助手</span>
+        </div>
+      </div>
+      <button id="craft-btn" disabled>注入魔法 ✨</button>
+      <button id="craft-close">关闭</button>
+    </div>
+
+    <div id="minimap">
+      <canvas id="minimap-canvas" width="150" height="150"></canvas>
+    </div>
+  </div>
+
+  <div id="title-screen">
+    <div class="title-content">
+      <h1 class="game-title">泥灵界</h1>
+      <p class="game-subtitle">Clayrealm — Where Clay Meets Magic</p>
+      <div class="title-divider"></div>
+      <p class="game-tagline">捏一团黏土，注入一缕魔法，创造你的助手</p>
+      <button id="start-btn">踏入泥灵界 🌍</button>
+      <div class="title-footer">WASD 移动 | 鼠标 视角 | 左键 操作 | E 交互</div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/world.js"></script>
+  <script src="js/clay.js"></script>
+  <script src="js/spell.js"></script>
+  <script src="js/character.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
